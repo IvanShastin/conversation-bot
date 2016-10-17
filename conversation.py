@@ -58,15 +58,15 @@ def pass_to_conversation(username, password, workspace, text, context):
 
 def main(argv):
     conversation_context  = {}
-    conversation_text     = 'jopa'
+    conversation_text     = 'hello'
     conversation_response = ''
 
     SPEECHTOTEXT_IBM_USERNAME = '9230abde-b92c-49ff-9ed7-7d23d4d3f9b5'
     SPEECHTOTEXT_IBM_PASSWORD = 'YV8ISnaxRhbJ'
 
-    CONVERSATION_IBM_USERNAME = 'ee143c14-5d9e-4c8b-a84d-639b8b7aa168'
-    CONVERSATION_IBM_PASSWORD = 'nAbyku6iHCFn'
-    CONVERSATION_IBM_WORKSPACE= 'f018ac84-b8cc-4a10-b850-480803103471'
+    CONVERSATION_IBM_USERNAME = 'e3592cb8-04cd-4a02-a2df-00b9d890c2a0'
+    CONVERSATION_IBM_PASSWORD = 'ouAZEesIzE2q'
+    CONVERSATION_IBM_WORKSPACE= '7d29a542-327b-4e49-807d-e933f199709f'
 
     TEXTTOSPEECH_IBM_USERNAME = 'ad400dc7-4c75-42bb-abeb-638a24349e13'
     TEXTTOSPEECH_IBM_PASSWORD = 'TiZUvc5YgPav'
@@ -96,6 +96,8 @@ def main(argv):
             if 'bye' == conversation_response:
                 sys.exit(0)
     '''
+    conversation_context,conversation_response = pass_to_conversation(CONVERSATION_IBM_USERNAME, CONVERSATION_IBM_PASSWORD, CONVERSATION_IBM_WORKSPACE, conversation_text, conversation_context)   
+    print(conversation_response)
     conversation_context,conversation_response = pass_to_conversation(CONVERSATION_IBM_USERNAME, CONVERSATION_IBM_PASSWORD, CONVERSATION_IBM_WORKSPACE, conversation_text, conversation_context)   
     print(conversation_response)
 if __name__ == '__main__':
