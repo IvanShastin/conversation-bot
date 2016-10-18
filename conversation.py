@@ -1,5 +1,6 @@
 import sys
 import speech_recognition
+import wolframalpha
 
 from watson_developer_cloud import ConversationV1
 from watson_developer_cloud import WatsonException
