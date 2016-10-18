@@ -6,6 +6,32 @@ from watson_developer_cloud import WatsonException
 from watson_developer_cloud import ToneAnalyzerV3
 from watson_developer_cloud import TextToSpeechV1
 from pyaudio import PyAudio
+from getopt import getopt
+from getopt import GetoptError
+
+__author__ = 'Ruslan Iakhin'
+
+def get_input_type(argv):
+     input_type = 'text'
+
+     if len(argv) <= 1:
+        print("usage: %s --input <text|voice>" % argv[0])
+        sys.exit(2)
+
+    try:
+        opts, args = getopt(argv[1:],"i:","input=")
+        
+        for opt, arg in opts:
+            if opt == '--input':
+                input_type = arg
+            else:
+                print("usage: %s --input <text|voice>" % argv[0])
+                sys.exit(2)
+
+    except GetoptError as error:
+        print(error)
+        sys.exit(2)
+    return input_type
 
 def pass_to_texttospeach(username, password, text):
     RATE      = 22050
@@ -78,6 +104,7 @@ def main(argv):
     conversation_context  = {}
     conversation_text     = ''
     conversation_response = ''
+    input_type            = 'text'
 
     SPEECHTOTEXT_IBM_USERNAME = '9230abde-b92c-49ff-9ed7-7d23d4d3f9b5'
     SPEECHTOTEXT_IBM_PASSWORD = 'YV8ISnaxRhbJ'
@@ -92,25 +119,31 @@ def main(argv):
     TONEANALIZER_IBM_USERNAME = '50f87320-b579-41f5-8f2c-3500a703e9b7'
     TONEANALIZER_IBM_PASSWORD = 'Id4tqQbQN08i'
 
-    speachrecognition = speech_recognition.Recognizer()
+    input_type = get_input_type(argv)
+    
+    if input_type == 'voice':
+        speachrecognition = speech_recognition.Recognizer()
+
     conversation_context,conversation_response = pass_to_conversation(CONVERSATION_IBM_USERNAME, CONVERSATION_IBM_PASSWORD, CONVERSATION_IBM_WORKSPACE, conversation_text, conversation_context)
     pass_to_texttospeach(TEXTTOSPEECH_IBM_USERNAME, TEXTTOSPEECH_IBM_PASSWORD, conversation_response)
     print('Watson: %s' % conversation_response)
 
     while True:
-        '''
-       with speech_recognition.Microphone() as source:
-        audio = speachrecognition.listen(source)
+        if input_type == 'voice':
+            with speech_recognition.Microphone() as source:
+                audio = speachrecognition.listen(source)
 
-        try:
-            conversation_text = speachrecognition.recognize_ibm(audio, username=SPEECHTOTEXT_IBM_USERNAME, password=SPEECHTOTEXT_IBM_PASSWORD)
-        except speech_recognition.UnknownValueError:
-            conversation_text = ''
-        except speech_recognition.RequestError as error:
-            conversation_text = ''
-        '''
-
-        conversation_text = input("You: ")
+            try:
+                conversation_text = speachrecognition.recognize_ibm(audio, username=SPEECHTOTEXT_IBM_USERNAME, password=SPEECHTOTEXT_IBM_PASSWORD)
+            except speech_recognition.UnknownValueError:
+                conversation_text = ''
+            except speech_recognition.RequestError as error:
+                conversation_text = ''
+        else:
+            if sys.version_info < (3,0):
+                conversation_text = raw_input("You: ")
+            else:
+                conversation_text = input("You: ")
 
         if conversation_text == '':
             print('You: <not recognized, say again>')
