@@ -5,9 +5,14 @@ from watson_developer_cloud import ConversationV1
 from watson_developer_cloud import WatsonException
 from watson_developer_cloud import ToneAnalyzerV3
 from watson_developer_cloud import TextToSpeechV1
+from pyaudio import PyAudio
 
 def pass_to_texttospeach(username, password, text):
-    response = ''
+    RATE      = 22050
+    SAMPWIDTH = 2
+    NCHANNELS = 1
+    CHANK     = 2048
+    ACCEPT    = 'audio/wav'
 
     texttospeach = TextToSpeechV1(
         username = username,
@@ -15,9 +20,22 @@ def pass_to_texttospeach(username, password, text):
     )
 
     response = texttospeach.synthesize(
-        text = text
+        text   = text,
+        accept = ACCEPT
     )
-    return response
+
+    audio = PyAudio()
+
+    stream = audio.open(format=audio.get_format_from_width(SAMPWIDTH),
+                        channels=NCHANNELS,
+                        rate=RATE,
+                        output=True)
+
+
+    stream.write(response)
+    stream.stop_stream()
+    stream.close()
+    audio.terminate()
 def pass_to_toneanalizer(username, password, text):
     response = ''
 
@@ -46,6 +64,7 @@ def pass_to_conversation(username, password, workspace, text, context):
         message_input= {'text': text },
         context = context
     )
+    print(conversation_response)
     context = conversation_response['context']
 
     if len(conversation_response['output']['text']) > 0:
@@ -58,7 +77,7 @@ def pass_to_conversation(username, password, workspace, text, context):
 
 def main(argv):
     conversation_context  = {}
-    conversation_text     = 'hello'
+    conversation_text     = ''
     conversation_response = ''
 
     SPEECHTOTEXT_IBM_USERNAME = '9230abde-b92c-49ff-9ed7-7d23d4d3f9b5'
@@ -75,8 +94,12 @@ def main(argv):
     TONEANALIZER_IBM_PASSWORD = 'Id4tqQbQN08i'
 
     speachrecognition = speech_recognition.Recognizer()
-    '''
+    conversation_context,conversation_response = pass_to_conversation(CONVERSATION_IBM_USERNAME, CONVERSATION_IBM_PASSWORD, CONVERSATION_IBM_WORKSPACE, conversation_text, conversation_context)
+    pass_to_texttospeach(TEXTTOSPEECH_IBM_USERNAME, TEXTTOSPEECH_IBM_PASSWORD, conversation_response)
+    print('Watson: %s' % conversation_response)
+
     while True:
+        '''
        with speech_recognition.Microphone() as source:
         audio = speachrecognition.listen(source)
 
@@ -86,19 +109,20 @@ def main(argv):
             conversation_text = ''
         except speech_recognition.RequestError as error:
             conversation_text = ''
+        '''
+
+        conversation_text = input("You: ")
 
         if conversation_text == '':
             print('You: <not recognized, say again>')
         else:
-            toneanalizer_response = pass_to_toneanalizer(TONEANALIZER_IBM_USERNAME, TONEANALIZER_IBM_PASSWORD, conversation_text)
+            #toneanalizer_response = pass_to_toneanalizer(TONEANALIZER_IBM_USERNAME, TONEANALIZER_IBM_PASSWORD, conversation_text)
             conversation_context,conversation_response = pass_to_conversation(CONVERSATION_IBM_USERNAME, CONVERSATION_IBM_PASSWORD, CONVERSATION_IBM_WORKSPACE, conversation_text, conversation_context)
-            
-            if 'bye' == conversation_response:
-                sys.exit(0)
-    '''
-    conversation_context,conversation_response = pass_to_conversation(CONVERSATION_IBM_USERNAME, CONVERSATION_IBM_PASSWORD, CONVERSATION_IBM_WORKSPACE, conversation_text, conversation_context)   
-    print(conversation_response)
-    conversation_context,conversation_response = pass_to_conversation(CONVERSATION_IBM_USERNAME, CONVERSATION_IBM_PASSWORD, CONVERSATION_IBM_WORKSPACE, conversation_text, conversation_context)   
-    print(conversation_response)
+            pass_to_texttospeach(TEXTTOSPEECH_IBM_USERNAME, TEXTTOSPEECH_IBM_PASSWORD, conversation_response)
+            print('Watson: %s' % conversation_response)
+
+        if 'bye' in conversation_text:
+            sys.exit(0)
+
 if __name__ == '__main__':
     main(sys.argv)
