@@ -135,6 +135,8 @@ def main(argv):
                 conversation_text = ''
             except speech_recognition.RequestError as error:
                 conversation_text = ''
+
+            print('You: %s' % conversation_text)
         else:
             if sys.version_info < (3,0):
                 conversation_text = raw_input("You: ")
