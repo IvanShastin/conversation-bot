@@ -12,9 +12,9 @@ from getopt import GetoptError
 __author__ = 'Ruslan Iakhin'
 
 def get_input_type(argv):
-     input_type = 'text'
+    input_type = 'text'
 
-     if len(argv) <= 1:
+    if len(argv) <= 1:
         print("usage: %s --input <text|voice>" % argv[0])
         sys.exit(2)
 
@@ -49,15 +49,11 @@ def pass_to_texttospeach(username, password, text):
         text   = text,
         accept = ACCEPT
     )
-
     audio = PyAudio()
-
     stream = audio.open(format=audio.get_format_from_width(SAMPWIDTH),
                         channels=NCHANNELS,
                         rate=RATE,
                         output=True)
-
-
     stream.write(response)
     stream.stop_stream()
     stream.close()
