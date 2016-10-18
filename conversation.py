@@ -64,7 +64,6 @@ def pass_to_conversation(username, password, workspace, text, context):
         message_input= {'text': text },
         context = context
     )
-    print(conversation_response)
     context = conversation_response['context']
 
     if len(conversation_response['output']['text']) > 0:
