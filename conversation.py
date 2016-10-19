@@ -35,6 +35,11 @@ def get_input_type(argv):
         sys.exit(2)
     return input_type
 
+def pass_to_wolfram(app_id, query):
+    response = ''
+    client = wolframalpha.Client(app_id)
+    response = client.query(query)
+    return response
 def pass_to_texttospeach(username, password, text):
     RATE      = 22050
     SAMPWIDTH = 2
@@ -118,14 +123,16 @@ def main(argv):
     TONEANALIZER_IBM_USERNAME = '50f87320-b579-41f5-8f2c-3500a703e9b7'
     TONEANALIZER_IBM_PASSWORD = 'Id4tqQbQN08i'
 
+    WOLFRAM_APP_ID            = '7JJH75-G2WEATH25E'
+
     input_type = get_input_type(argv)
     
     if input_type == 'voice':
         speachrecognition = speech_recognition.Recognizer()
 
-    conversation_context,conversation_response = pass_to_conversation(CONVERSATION_IBM_USERNAME, CONVERSATION_IBM_PASSWORD, CONVERSATION_IBM_WORKSPACE, conversation_text, conversation_context)
-    pass_to_texttospeach(TEXTTOSPEECH_IBM_USERNAME, TEXTTOSPEECH_IBM_PASSWORD, conversation_response)
-    print('Watson: %s' % conversation_response)
+    #conversation_context,conversation_response = pass_to_conversation(CONVERSATION_IBM_USERNAME, CONVERSATION_IBM_PASSWORD, CONVERSATION_IBM_WORKSPACE, conversation_text, conversation_context)
+    #pass_to_texttospeach(TEXTTOSPEECH_IBM_USERNAME, TEXTTOSPEECH_IBM_PASSWORD, conversation_response)
+    #print('Watson: %s' % conversation_response)
 
     while True:
         if input_type == 'voice':
@@ -149,10 +156,13 @@ def main(argv):
         if conversation_text == '':
             print('You: <not recognized, say again>')
         else:
-            #toneanalizer_response = pass_to_toneanalizer(TONEANALIZER_IBM_USERNAME, TONEANALIZER_IBM_PASSWORD, conversation_text)
-            conversation_context,conversation_response = pass_to_conversation(CONVERSATION_IBM_USERNAME, CONVERSATION_IBM_PASSWORD, CONVERSATION_IBM_WORKSPACE, conversation_text, conversation_context)
+            toneanalizer_response = pass_to_toneanalizer(TONEANALIZER_IBM_USERNAME, TONEANALIZER_IBM_PASSWORD, conversation_text)
+            #conversation_context,conversation_response = pass_to_conversation(CONVERSATION_IBM_USERNAME, CONVERSATION_IBM_PASSWORD, CONVERSATION_IBM_WORKSPACE, conversation_text, conversation_context)
             #pass_to_texttospeach(TEXTTOSPEECH_IBM_USERNAME, TEXTTOSPEECH_IBM_PASSWORD, conversation_response)
             print('Watson: %s' % conversation_response)
+            for tone in toneanalizer_response['document_tone']['tone_categories'][0]['tones']:
+                if tone['score'] > 0.5:
+                    print(tone)
 
         if 'bye' in conversation_text:
             sys.exit(0)
