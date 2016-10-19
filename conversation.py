@@ -1,6 +1,7 @@
 import sys
 import speech_recognition
 import wolframalpha
+import json
 
 from watson_developer_cloud import ConversationV1
 from watson_developer_cloud import WatsonException
@@ -95,6 +96,7 @@ def pass_to_conversation(username, password, workspace, text, context):
                 response += output_text
     else:
         response = 'I didn`t understand you.'
+
     return context, response
 
 def main(argv):
@@ -149,7 +151,7 @@ def main(argv):
         else:
             #toneanalizer_response = pass_to_toneanalizer(TONEANALIZER_IBM_USERNAME, TONEANALIZER_IBM_PASSWORD, conversation_text)
             conversation_context,conversation_response = pass_to_conversation(CONVERSATION_IBM_USERNAME, CONVERSATION_IBM_PASSWORD, CONVERSATION_IBM_WORKSPACE, conversation_text, conversation_context)
-            pass_to_texttospeach(TEXTTOSPEECH_IBM_USERNAME, TEXTTOSPEECH_IBM_PASSWORD, conversation_response)
+            #pass_to_texttospeach(TEXTTOSPEECH_IBM_USERNAME, TEXTTOSPEECH_IBM_PASSWORD, conversation_response)
             print('Watson: %s' % conversation_response)
 
         if 'bye' in conversation_text:
