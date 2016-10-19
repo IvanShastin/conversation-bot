@@ -130,9 +130,9 @@ def main(argv):
     if input_type == 'voice':
         speachrecognition = speech_recognition.Recognizer()
 
-    #conversation_context,conversation_response = pass_to_conversation(CONVERSATION_IBM_USERNAME, CONVERSATION_IBM_PASSWORD, CONVERSATION_IBM_WORKSPACE, conversation_text, conversation_context)
-    #pass_to_texttospeach(TEXTTOSPEECH_IBM_USERNAME, TEXTTOSPEECH_IBM_PASSWORD, conversation_response)
-    #print('Watson: %s' % conversation_response)
+    conversation_context,conversation_response = pass_to_conversation(CONVERSATION_IBM_USERNAME, CONVERSATION_IBM_PASSWORD, CONVERSATION_IBM_WORKSPACE, conversation_text, conversation_context)
+    pass_to_texttospeach(TEXTTOSPEECH_IBM_USERNAME, TEXTTOSPEECH_IBM_PASSWORD, conversation_response)
+    print('Watson: %s' % conversation_response)
 
     while True:
         if input_type == 'voice':
@@ -157,12 +157,15 @@ def main(argv):
             print('You: <not recognized, say again>')
         else:
             toneanalizer_response = pass_to_toneanalizer(TONEANALIZER_IBM_USERNAME, TONEANALIZER_IBM_PASSWORD, conversation_text)
-            #conversation_context,conversation_response = pass_to_conversation(CONVERSATION_IBM_USERNAME, CONVERSATION_IBM_PASSWORD, CONVERSATION_IBM_WORKSPACE, conversation_text, conversation_context)
+            conversation_context,conversation_response = pass_to_conversation(CONVERSATION_IBM_USERNAME, CONVERSATION_IBM_PASSWORD, CONVERSATION_IBM_WORKSPACE, conversation_text, conversation_context)
             #pass_to_texttospeach(TEXTTOSPEECH_IBM_USERNAME, TEXTTOSPEECH_IBM_PASSWORD, conversation_response)
             print('Watson: %s' % conversation_response)
+
+            print(conversation_context)
             for tone in toneanalizer_response['document_tone']['tone_categories'][0]['tones']:
                 if tone['score'] > 0.5:
                     print(tone)
+                    conversation_context['tone'] = tone['tone_name']
 
         if 'bye' in conversation_text:
             sys.exit(0)
