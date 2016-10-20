@@ -161,10 +161,8 @@ def main(argv):
             #pass_to_texttospeach(TEXTTOSPEECH_IBM_USERNAME, TEXTTOSPEECH_IBM_PASSWORD, conversation_response)
             print('Watson: %s' % conversation_response)
 
-            print(conversation_context)
             for tone in toneanalizer_response['document_tone']['tone_categories'][0]['tones']:
                 if tone['score'] > 0.5:
-                    print(tone)
                     conversation_context['tone'] = tone['tone_name']
 
         if 'bye' in conversation_text:
