@@ -98,7 +98,7 @@ def pass_to_conversation(username, password, workspace, text, context):
     if len(conversation_response['output']['text']) > 0:
         for output_text in conversation_response['output']['text']:
             if len(output_text) > 0:
-                response += output_text
+                response += output_text + " "
     else:
         response = 'I didn`t understand you.'
 
