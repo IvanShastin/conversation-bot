@@ -164,7 +164,6 @@ def main(argv):
             for tone in toneanalizer_response['document_tone']['tone_categories'][0]['tones']:
                 if tone['score'] > 0.5:
                     conversation_context['tone'] = tone['tone_name']
-
         if 'bye' in conversation_text:
             sys.exit(0)
 
