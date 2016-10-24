@@ -1,6 +1,5 @@
 import sys
 import speech_recognition
-import wolframalpha
 import json
 
 from watson_developer_cloud import ConversationV1
@@ -8,8 +7,7 @@ from watson_developer_cloud import WatsonException
 from watson_developer_cloud import ToneAnalyzerV3
 from watson_developer_cloud import TextToSpeechV1
 from pyaudio import PyAudio
-from getopt import getopt
-from getopt import GetoptError
+from getopt import getopt,GetoptError
 
 __author__ = 'Ruslan Iakhin'
 
@@ -35,11 +33,6 @@ def get_input_type(argv):
         sys.exit(2)
     return input_type
 
-def pass_to_wolfram(app_id, query):
-    response = ''
-    client = wolframalpha.Client(app_id)
-    response = client.query(query)
-    return response
 def pass_to_texttospeach(username, password, text):
     RATE      = 22050
     SAMPWIDTH = 2
@@ -158,7 +151,7 @@ def main(argv):
         else:
             toneanalizer_response = pass_to_toneanalizer(TONEANALIZER_IBM_USERNAME, TONEANALIZER_IBM_PASSWORD, conversation_text)
             conversation_context,conversation_response = pass_to_conversation(CONVERSATION_IBM_USERNAME, CONVERSATION_IBM_PASSWORD, CONVERSATION_IBM_WORKSPACE, conversation_text, conversation_context)
-            #pass_to_texttospeach(TEXTTOSPEECH_IBM_USERNAME, TEXTTOSPEECH_IBM_PASSWORD, conversation_response)
+            pass_to_texttospeach(TEXTTOSPEECH_IBM_USERNAME, TEXTTOSPEECH_IBM_PASSWORD, conversation_response)
             print('Watson: %s' % conversation_response)
 
             for tone in toneanalizer_response['document_tone']['tone_categories'][0]['tones']:
