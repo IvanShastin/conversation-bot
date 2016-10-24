@@ -116,8 +116,6 @@ def main(argv):
     TONEANALIZER_IBM_USERNAME = '50f87320-b579-41f5-8f2c-3500a703e9b7'
     TONEANALIZER_IBM_PASSWORD = 'Id4tqQbQN08i'
 
-    WOLFRAM_APP_ID            = '7JJH75-G2WEATH25E'
-
     input_type = get_input_type(argv)
     
     if input_type == 'voice':
